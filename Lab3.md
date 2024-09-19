@@ -10,6 +10,8 @@ library(haven)
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 4.2.3
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -23,11 +25,19 @@ library(dplyr)
 
 ``` r
 library(tidyr)
-library(ggplot2)
-library(psych)
 ```
 
-    ## Warning: package 'psych' was built under R version 4.3.3
+    ## Warning: package 'tidyr' was built under R version 4.2.3
+
+``` r
+library(ggplot2)
+```
+
+    ## Warning: package 'ggplot2' was built under R version 4.2.3
+
+``` r
+library(psych)
+```
 
     ## 
     ## Attaching package: 'psych'
@@ -37,61 +47,9 @@ library(psych)
     ##     %+%, alpha
 
 ``` r
-library(bruceR)
-```
-
-    ## 
-    ## bruceR (v2023.9)
-    ## Broadly Useful Convenient and Efficient R functions
-    ## 
-    ## Packages also loaded:
-    ## ✔ data.table ✔ emmeans
-    ## ✔ dplyr      ✔ lmerTest
-    ## ✔ tidyr      ✔ effectsize
-    ## ✔ stringr    ✔ performance
-    ## ✔ ggplot2    ✔ interactions
-    ## 
-    ## Main functions of `bruceR`:
-    ## cc()             Describe()  TTEST()
-    ## add()            Freq()      MANOVA()
-    ## .mean()          Corr()      EMMEANS()
-    ## set.wd()         Alpha()     PROCESS()
-    ## import()         EFA()       model_summary()
-    ## print_table()    CFA()       lavaan_summary()
-    ## 
-    ## For full functionality, please install all dependencies:
-    ## install.packages("bruceR", dep=TRUE)
-    ## 
-    ## Online documentation:
-    ## https://psychbruce.github.io/bruceR
-    ## 
-    ## To use this package in publications, please cite:
-    ## Bao, H.-W.-S. (2023). bruceR: Broadly useful convenient and efficient R functions (Version 2023.9) [Computer software]. https://CRAN.R-project.org/package=bruceR
-
-    ## 
-    ## NEWS: A new version of bruceR (2024.6) is available (2024-06-13)!
-    ## 
-    ## ***** Please update *****
-    ## install.packages("bruceR", dep=TRUE)
-
-    ## 
-    ## These packages are dependencies of `bruceR` but not installed:
-    ## - pacman, lmtest, vars, phia, GPArotation
-    ## 
-    ## ***** Install all dependencies *****
-    ## install.packages("bruceR", dep=TRUE)
-
-``` r
 library(ggsci)
-```
-
-    ## Warning: package 'ggsci' was built under R version 4.3.3
-
-``` r
 library(see)
 ```
-
-    ## Warning: package 'see' was built under R version 4.3.3
 
     ## 
     ## Attaching package: 'see'
@@ -103,7 +61,7 @@ library(see)
 # Load Datasets
 
 ``` r
-lab3data <- read.csv("C:/Users/Colin/Documents/Github/Website/Lab3/lab3data.csv")
+lab3data <- read.csv("/Users/jostarenky/Documents/GitHub/Lab3/lab3data.csv")
 ```
 
 # Missing Data
@@ -127,28 +85,29 @@ lab3data %>% count(Gender)
     ## 3     NA   1
 
 ``` r
-#Solution 1
-lab3data<- lab3data%>%
-  mutate_at(c('Gender'),funs(str_replace(., "1", "Male")))
-```
+#Solution 1 - the mutate command doesn't work for me, I think because my RStudio can't install the "bruce" package
+#lab3data<- lab3data%>%
+ # mutate_at(c('Gender'),funs(str_replace(., "1", "Male")))
 
-    ## Warning: `funs()` was deprecated in dplyr 0.8.0.
-    ## ℹ Please use a list of either functions or lambdas:
-    ## 
-    ## # Simple named list: list(mean = mean, median = median)
-    ## 
-    ## # Auto named with `tibble::lst()`: tibble::lst(mean, median)
-    ## 
-    ## # Using lambdas list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
-``` r
 #Solution 2
 
-#lab3data$Gender<-recode(lab3data$Gender, '1' = 'X', '2' = 'Y')
+lab3data$Gender<-recode(lab3data$Gender, 'X' = 'Female', 'Y' = 'Male')
+```
 
+    ## Warning in recode.numeric(lab3data$Gender, X = "Female", Y = "Male"): NAs
+    ## introduced by coercion
 
+    ## Warning: Unreplaced values treated as NA as `.x` is not compatible.
+    ## Please specify replacements exhaustively or supply `.default`.
+
+``` r
+lab3data %>% count(Gender)
+```
+
+    ##   Gender   n
+    ## 1   <NA> 300
+
+``` r
 #Now recode 2 into Female
 ```
 
@@ -179,7 +138,88 @@ lab3data %>% count(RSE2_R)
 
 ``` r
 #Now do the same for the other items (5,6,8,9)
+lab3data %>% count(RSE5)
 ```
+
+    ##   RSE5   n
+    ## 1    1 117
+    ## 2    2 108
+    ## 3    3  49
+    ## 4    4  26
+
+``` r
+lab3data$RSE5_R <-5  - lab3data$RSE5
+lab3data %>% count(RSE5_R)
+```
+
+    ##   RSE5_R   n
+    ## 1      1  26
+    ## 2      2  49
+    ## 3      3 108
+    ## 4      4 117
+
+``` r
+lab3data %>% count(RSE6)
+```
+
+    ##   RSE6   n
+    ## 1    1 112
+    ## 2    2  86
+    ## 3    3  66
+    ## 4    4  36
+
+``` r
+lab3data$RSE6_R <-5  - lab3data$RSE6
+lab3data %>% count(RSE6_R)
+```
+
+    ##   RSE6_R   n
+    ## 1      1  36
+    ## 2      2  66
+    ## 3      3  86
+    ## 4      4 112
+
+``` r
+lab3data %>% count(RSE8)
+```
+
+    ##   RSE8  n
+    ## 1    1 76
+    ## 2    2 94
+    ## 3    3 82
+    ## 4    4 48
+
+``` r
+lab3data$RSE8_R <-5  - lab3data$RSE8
+lab3data %>% count(RSE8_R)
+```
+
+    ##   RSE8_R  n
+    ## 1      1 48
+    ## 2      2 82
+    ## 3      3 94
+    ## 4      4 76
+
+``` r
+lab3data %>% count(RSE9)
+```
+
+    ##   RSE9   n
+    ## 1    1 143
+    ## 2    2  90
+    ## 3    3  38
+    ## 4    4  29
+
+``` r
+lab3data$RSE9_R <-5  - lab3data$RSE9
+lab3data %>% count(RSE9_R)
+```
+
+    ##   RSE9_R   n
+    ## 1      1  29
+    ## 2      2  38
+    ## 3      3  90
+    ## 4      4 143
 
 # Create Composites
 
@@ -188,15 +228,37 @@ lab3data %>% count(RSE2_R)
 
 
 #Fill in the items
-#lab3data <- lab3data %>%
-  #mutate(RSE = rowMeans(cbind(RSE1, ..., RSE10)))
+lab3data <- lab3data %>%
+  mutate(RSE = rowMeans(cbind(RSE1, RSE2_R, RSE3, RSE4, RSE5_R, RSE6_R, RSE7, RSE8_R, RSE9_R, RSE10)))
 
 #Create another composite for SWL, but this time use rowSums
+lab3data <- lab3data %>%
+  mutate(SWL = rowSums(cbind(SWL1, SWL2, SWL3, SWL4, SWL5)))
 ```
 
 # Get Summary Descriptive Statistics
 
+``` r
+lab3data %>% 
+group_by(Gender) %>%
+  dplyr::summarize(mean_SWL    = mean(SWL),
+      mean_RSE    = mean(RSE),
+      std_dev_SWL = sd(SWL),
+      std_dev_RSE = sd(RSE),
+      corr_SWL_RSE  = cor(SWL, RSE)
+)
+```
+
+    ## # A tibble: 1 × 6
+    ##   Gender mean_SWL mean_RSE std_dev_SWL std_dev_RSE corr_SWL_RSE
+    ##   <chr>     <dbl>    <dbl>       <dbl>       <dbl>        <dbl>
+    ## 1 <NA>       16.3     3.05        5.22       0.665        0.431
+
 # Q1: Descrptively, which group has a higher self-esteem? What about life satisfaction? Is the relationship between self-esteem and life satisfaction stronger for males or for females?
+
+Women have higher self-esteem scores than men, and men have higher life
+satisfaction scores than women The relationship between the two is also
+stronger in women, as evidenced by the higher correlation.
 
 # Visualization of Data Distribution
 
@@ -205,13 +267,28 @@ lab3data<- lab3data %>%
   drop_na(Gender)
 
 
-ggplot(lab3data, aes(x = Gender, y = RSE1)) + geom_violin(aes(fill=Gender)) + scale_fill_simpsons() + theme_modern()
+ggplot(lab3data, aes(x = Gender, y = RSE)) + geom_violin(aes(fill=Gender)) + scale_fill_simpsons() + theme_modern()
 ```
 
 ![](Lab3_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 #Create a plot for SWL by Gender with a different color palette
+
+lab3data<- lab3data %>%
+  drop_na(Gender)
+
+
+ggplot(lab3data, aes(x = Gender, y = SWL)) + geom_violin(aes(fill=Gender)) + scale_fill_cosmic() + theme_modern()
 ```
 
+![](Lab3_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
+
 # Q2: What you can tell from looking at a violin plot? What you cannot tell? What inferences you can make based on the two violin plots?
+
+You can see the distribution of scores and get a good sense of the mode,
+but you can’t necessarily see the mean - for example, based on the
+violin plot for SWL, the majority of the scores were around 20, whereas
+the means were around 16. We also cannot see the correlations or SDs. We
+can infer that more women score highly for RSE than men, and slightly
+more men score highly for SWL than women.
