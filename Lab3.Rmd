@@ -12,7 +12,6 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(psych)
-library(bruceR)
 library(ggsci)
 library(see)
 
@@ -21,7 +20,7 @@ library(see)
 # Load Datasets
 ```{r}
 
-lab3data <- read.csv("C:/Users/Colin/Documents/Github/Website/Lab3/lab3data.csv")
+lab3data <- read.csv("/Users/jostarenky/Documents/GitHub/Lab3/lab3data.csv")
 
 ```
 
@@ -41,13 +40,14 @@ list_lab3data<- drop_na(lab3data)
 
 lab3data %>% count(Gender)
 
-#Solution 1
-lab3data<- lab3data%>%
-  mutate_at(c('Gender'),funs(str_replace(., "1", "Male")))
+#Solution 1 - the mutate command doesn't work for me, I think because my RStudio can't install the "bruce" package
+#lab3data<- lab3data%>%
+ # mutate_at(c('Gender'),funs(str_replace(., "1", "Male")))
 
 #Solution 2
 
-#lab3data$Gender<-recode(lab3data$Gender, '1' = 'X', '2' = 'Y')
+lab3data$Gender<-recode(lab3data$Gender, 'X' = 'Female', 'Y' = 'Male')
+lab3data %>% count(Gender)
 
 
 #Now recode 2 into Female
@@ -68,6 +68,21 @@ lab3data$RSE2_R <- 5 - lab3data$RSE2
 lab3data %>% count(RSE2_R)
 
 #Now do the same for the other items (5,6,8,9)
+lab3data %>% count(RSE5)
+lab3data$RSE5_R <-5  - lab3data$RSE5
+lab3data %>% count(RSE5_R)
+
+lab3data %>% count(RSE6)
+lab3data$RSE6_R <-5  - lab3data$RSE6
+lab3data %>% count(RSE6_R)
+
+lab3data %>% count(RSE8)
+lab3data$RSE8_R <-5  - lab3data$RSE8
+lab3data %>% count(RSE8_R)
+
+lab3data %>% count(RSE9)
+lab3data$RSE9_R <-5  - lab3data$RSE9
+lab3data %>% count(RSE9_R)
 
 
 ```
@@ -80,24 +95,32 @@ lab3data %>% count(RSE2_R)
 
 
 #Fill in the items
-#lab3data <- lab3data %>%
-  #mutate(RSE = rowMeans(cbind(RSE1, ..., RSE10)))
+lab3data <- lab3data %>%
+  mutate(RSE = rowMeans(cbind(RSE1, RSE2_R, RSE3, RSE4, RSE5_R, RSE6_R, RSE7, RSE8_R, RSE9_R, RSE10)))
 
 #Create another composite for SWL, but this time use rowSums
+lab3data <- lab3data %>%
+  mutate(SWL = rowSums(cbind(SWL1, SWL2, SWL3, SWL4, SWL5)))
 
 ```
 
 
 # Get Summary Descriptive Statistics
 ```{r}
-
-
+lab3data %>% 
+group_by(Gender) %>%
+  dplyr::summarize(mean_SWL    = mean(SWL),
+      mean_RSE    = mean(RSE),
+      std_dev_SWL = sd(SWL),
+      std_dev_RSE = sd(RSE),
+      corr_SWL_RSE  = cor(SWL, RSE)
+)
 
 ```
 
 # Q1: Descrptively, which group has a higher self-esteem? What about life satisfaction? Is the relationship between self-esteem and life satisfaction stronger for males or for females? 
 
-
+Women have higher self-esteem scores than men, and men have higher life satisfaction scores than women The relationship between the two is also stronger in women, as evidenced by the higher correlation. 
 
 
 # Visualization of Data Distribution
@@ -107,10 +130,18 @@ lab3data<- lab3data %>%
   drop_na(Gender)
 
 
-ggplot(lab3data, aes(x = Gender, y = RSE1)) + geom_violin(aes(fill=Gender)) + scale_fill_simpsons() + theme_modern()
+ggplot(lab3data, aes(x = Gender, y = RSE)) + geom_violin(aes(fill=Gender)) + scale_fill_simpsons() + theme_modern()
 
 #Create a plot for SWL by Gender with a different color palette
+
+lab3data<- lab3data %>%
+  drop_na(Gender)
+
+
+ggplot(lab3data, aes(x = Gender, y = SWL)) + geom_violin(aes(fill=Gender)) + scale_fill_cosmic() + theme_modern()
 
 ```
 
 # Q2: What you can tell from looking at a violin plot? What you cannot tell? What inferences you can make based on the two violin plots? 
+
+You can see the distribution of scores and get a good sense of the mode, but you can't necessarily see the mean - for example, based on the violin plot for SWL, the majority of the scores were around 20, whereas the means were around 16. We also cannot see the correlations or SDs. We can infer that more women score highly for RSE than men, and slightly more men score highly for SWL than women.
